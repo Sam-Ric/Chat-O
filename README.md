@@ -8,9 +8,9 @@ This project contains the following elements:
 
   Responsible for managing the traffic from the clients within the local network, having two main functions:
 
-  1) Connecting clients
+  - Connecting clients
 
-  2) Receiving traffic from a client and redirecting it to the other clients connected to the server
+  - Receiving traffic from a client and redirecting it to the other clients connected to the server
 
   > ***Note:*** At the moment, a message's source is displayed as the host's IP address and port. In the future, a translation mechanism will be implemented to display the message authors using the respective usernames.
 

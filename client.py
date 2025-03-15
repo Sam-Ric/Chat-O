@@ -1,16 +1,39 @@
+'''
+    Chat-O
+    Client Module
+    by Sam-Ric
+'''
+
 import socket as s
 import threading as t
 import curses
 import sys
 
+
+'''
+    Function to establish connection to the server.
+    The client sends a request to the server and waits for the
+    connection process to be completed.
+'''
 def ConnectToServer(sock, serverAddress):
-  username = input("Username: ")
+  username = input("Username: ")    # Getting the user's desired username
+
+  # Sending the connection request to the server
   msg = str.encode(f"[NC]{username}")
   sock.sendto(msg, serverAddress)
+
+  # Waiting for the server's reply
   print("[*] Waiting for the server to reply...")
-  msg = sock.recv(1024)
+  msg = sock.recv(1024)   # -> blocking function
+
+  # Notify the user that the client was successfully connected to the server
   print("[*] Connection established!")
 
+
+'''
+    Function to fetch any incoming traffic from the server,
+    displaying it on the terminal.
+'''
 def ReceiveData(sock, shutdown):
   while shutdown.is_set() == False:
     data = sock.recv(1024)
@@ -20,12 +43,20 @@ def ReceiveData(sock, shutdown):
     msg = data[1]
     print(f'{src}\n ┗> {msg}')
 
+
+'''
+    Function to send a message to the server.
+'''
 def SendData(sock, serverAddress, shutdown):
   while shutdown.is_set() == False:
     msg = input()
     msg = str.encode(msg)
     sock.sendto(msg, serverAddress)
 
+
+'''
+    Updated application UI prototype (still in development)
+'''
 def ChatUI(stdscr):
    # Initialize curses
     curses.curs_set(1)  # Show cursor
@@ -83,6 +114,9 @@ def ChatUI(stdscr):
             input_text += chr(key) if key >= 32 and key <= 126 else ""
 
 
+'''
+    Client module's main function.
+'''
 def Client(localIP, localPort):
   print("[*] [ONLINE] Client status updated")
   serverAddress = (localIP, localPort)
@@ -93,7 +127,7 @@ def Client(localIP, localPort):
   # Connect to the server
   ConnectToServer(server, serverAddress)
 
-  # Utilize multithreading
+  # Enable multithreading
   shutdown = t.Event()
   receptionThread = t.Thread(target=ReceiveData, args=(server, shutdown))
   sendingThread = t.Thread(target=SendData, args=(server, serverAddress, shutdown))
